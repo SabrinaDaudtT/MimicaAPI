@@ -12,7 +12,7 @@ namespace MinicAPI.Repositories
     {
         private readonly MimicaContext _banco;
         //Conexão com banco de dados
-        public PalavrasRepository(MimicaContext banco)
+        public PalavrasRepository(MimicaContext banco) 
         {
             _banco = banco;
         }
@@ -39,7 +39,7 @@ namespace MinicAPI.Repositories
                 list.Paginacao = paginacao;
             }
 
-            list.AddRange(item.ToList());
+            list.Results.AddRange(item.ToList());
 
             return list;
         }

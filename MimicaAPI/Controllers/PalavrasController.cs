@@ -17,17 +17,16 @@ namespace MimicaAPI.Controllers
         //Conexão com banco de dados
         public PalavrasController(IPalavrasRepository repository, IMapper mapper)
         {
-            _repository = repository;
+            _repository = repository; 
             _mapper = mapper;
         }
 
-        [Route("")]
-        [HttpGet]
+        [HttpGet("",Name = "ObterTodos")]
         public ActionResult ObterTodos([FromQuery] PalavrasUrlQuery query)
-        {
+         {
             var item = _repository.ObterTodos(query);
 
-            if (item.Count == 0)
+            if (item.Results.Count == 0)
                 return NotFound();
 
             if (item.Paginacao != null)
@@ -35,19 +34,16 @@ namespace MimicaAPI.Controllers
 
             var list = _mapper.Map<PaginationList<Palavra>, PaginationList<PalavraDTO>>(item);
 
-            foreach (var palavra in list)
+            foreach (var palavra in list.Results)
             {
                 palavra.Links = new List<LinkDTO>();
                 palavra.Links.Add(
                     new LinkDTO("self", Url.Link("ObterPalavra", new { id = palavra.Id }), "GET")
                     );
-                palavra.Links.Add(
-              new LinkDTO("update", Url.Link("AtualizarPalavra", new { id = palavra.Id }), "PUT")
-              );
-                palavra.Links.Add(
-              new LinkDTO("delete", Url.Link("ExcluirPalavra", new { id = palavra.Id }), "DELTE")
-              );
             }
+
+            list.Links.Add(new LinkDTO("self", Url.Link("ObterTodos", query), "GET"));
+
             return Ok(list);
         }
 
