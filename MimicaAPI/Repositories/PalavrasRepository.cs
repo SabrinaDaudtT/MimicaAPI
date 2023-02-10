@@ -2,17 +2,18 @@
 using MimicaAPI.Database;
 using MimicaAPI.Helpers;
 using MimicaAPI.Models;
-using MinicAPI.Repositories.Contracts;
+using MimicaAPI.V1.Models;
+using MimicaAPI.Repositories.Contracts;
 using System;
 using System.Linq;
 
-namespace MinicAPI.Repositories
+namespace MimicaAPI.Repositories
 {
     public class PalavrasRepository : IPalavrasRepository
     {
         private readonly MimicaContext _banco;
         //Conexão com banco de dados
-        public PalavrasRepository(MimicaContext banco) 
+        public PalavrasRepository(MimicaContext banco)
         {
             _banco = banco;
         }

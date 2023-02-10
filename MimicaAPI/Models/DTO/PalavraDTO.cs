@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MinicAPI.Models.DTO
+namespace MimicaAPI.Models.DTO
 {
     public class PalavraDTO : BaseDTO
     {

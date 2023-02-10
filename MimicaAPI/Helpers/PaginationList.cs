@@ -1,15 +1,14 @@
-﻿using MinicAPI.Models.DTO;
-using System;
+﻿using MimicaAPI.Models.DTO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MimicaAPI.Helpers
 {
     public class PaginationList<T>
     {
-        public List<T> Results { get; set; } = new List<T>();
+        public List<T> Results { get; set; }
+
         public Paginacao Paginacao { get; set; }
-        public List<LinkDTO> Links { get; set; } = new List<LinkDTO>();
+
+        public List<LinkDTO> Links { get; set; }
     }
 }

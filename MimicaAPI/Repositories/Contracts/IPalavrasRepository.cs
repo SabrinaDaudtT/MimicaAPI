@@ -1,7 +1,7 @@
 ﻿using MimicaAPI.Helpers;
 using MimicaAPI.Models;
 
-namespace MinicAPI.Repositories.Contracts
+namespace MimicaAPI.Repositories.Contracts
 {
     public interface IPalavrasRepository
     {

@@ -2,14 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 using MimicaAPI.Helpers;
 using MimicaAPI.Models;
-using MinicAPI.Models.DTO;
-using MinicAPI.Repositories.Contracts;
+using MimicaAPI.Models.DTO;
+using MimicaAPI.Repositories.Contracts;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace MimicaAPI.Controllers
 {
-    [Route("api/palavras")]
+    [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class PalavrasController : ControllerBase
     {
         private readonly IPalavrasRepository _repository;
@@ -23,17 +26,21 @@ namespace MimicaAPI.Controllers
 
         [HttpGet("",Name = "ObterTodos")]
         public ActionResult ObterTodos([FromQuery] PalavrasUrlQuery query)
-         {
+        {
             var item = _repository.ObterTodos(query);
 
             if (item.Results.Count == 0)
                 return NotFound();
 
-            if (item.Paginacao != null)
-                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(item.Paginacao));
-
             var list = _mapper.Map<PaginationList<Palavra>, PaginationList<PalavraDTO>>(item);
 
+            CriarLinksListPalavrasDTO(query, item, list);
+
+            return Ok(list);
+        }
+
+        private void CriarLinksListPalavrasDTO(PalavrasUrlQuery query, PaginationList<Palavra> item, PaginationList<PalavraDTO> list)
+        {
             foreach (var palavra in list.Results)
             {
                 palavra.Links = new List<LinkDTO>();
@@ -44,7 +51,22 @@ namespace MimicaAPI.Controllers
 
             list.Links.Add(new LinkDTO("self", Url.Link("ObterTodos", query), "GET"));
 
-            return Ok(list);
+            if (item.Paginacao != null)
+            {
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(item.Paginacao));
+
+                if (query.pagNumero + 1 <= item.Paginacao.TotalPaginas)
+                {
+                    var queryString = new PalavrasUrlQuery() { pagNumero = query.pagNumero + 1, NumRegistroPag = query.NumRegistroPag, data = query.data };
+                    list.Links.Add(new LinkDTO("netx", Url.Link("ObterTodos", queryString), "GET"));
+
+                }
+                if (query.pagNumero - 1 > 0)
+                {
+                    var queryString = new PalavrasUrlQuery() { pagNumero = query.pagNumero - 1, NumRegistroPag = query.NumRegistroPag, data = query.data };
+                    list.Links.Add(new LinkDTO("prev", Url.Link("ObterTodos", queryString), "GET"));
+                }
+            }
         }
 
         [HttpGet("{id}", Name = "ObterPalavra")]
@@ -56,7 +78,6 @@ namespace MimicaAPI.Controllers
                 return NotFound();
 
             PalavraDTO palavraDTO = _mapper.Map<Palavra, PalavraDTO>(objPalavra);
-            palavraDTO.Links = new List<LinkDTO>();
             palavraDTO.Links.Add(
                 new LinkDTO("self", Url.Link("ObterPalavra", new { id = palavraDTO.Id }), "GET")
                 );
@@ -75,9 +96,23 @@ namespace MimicaAPI.Controllers
         [HttpPost]
         public ActionResult Cadastrar([FromBody] Palavra palavra)
         {
+            if (palavra == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
+            palavra.Ativo = true;
+            palavra.Criado = DateTime.Now;
             _repository.Cadastrar(palavra);
 
-            return Created($"/api/palavras/{palavra.Id}", palavra);
+            PalavraDTO palavraDTO = _mapper.Map<Palavra, PalavraDTO>(palavra);
+
+            palavraDTO.Links.Add(
+             new LinkDTO("self", Url.Link("ObterPalavra", new { id = palavraDTO.Id }), "GET")
+             );
+
+            return Created($"/api/palavras/{palavra.Id}", palavraDTO);
         }
 
         //  api/palavras/{id}(id, nome, ativo ...)
@@ -89,8 +124,22 @@ namespace MimicaAPI.Controllers
             if (obj == null)
                 return NotFound();
 
+            if (palavra == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             palavra.Id = id;
+            palavra.Ativo = obj.Ativo;
+            palavra.Criado = obj.Criado;
+            palavra.Atualizado = DateTime.Now;
             _repository.Atualizar(palavra);
+
+            PalavraDTO palavraDTO = _mapper.Map<Palavra, PalavraDTO>(palavra);
+            palavraDTO.Links.Add(
+             new LinkDTO("self", Url.Link("ObterPalavra", new { id = palavraDTO.Id }), "GET")
+             );
 
             return Ok();
         }

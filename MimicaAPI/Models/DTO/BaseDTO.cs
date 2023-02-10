@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 
-namespace MinicAPI.Models.DTO
+namespace MimicaAPI.Models.DTO
 {
     public abstract class BaseDTO
     {
-        public List<LinkDTO> Links { get; set; }
+        public List<LinkDTO> Links { get; set; } = new List<LinkDTO>();
     }
 }

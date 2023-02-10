@@ -12,5 +12,6 @@ namespace MimicaAPI.Helpers
         public int? pagNumero { get; set; }
 
         public int? NumRegistroPag { get; set; }
+
     }
 }
