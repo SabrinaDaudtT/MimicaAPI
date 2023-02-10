@@ -2,7 +2,6 @@
 using MimicaAPI.Database;
 using MimicaAPI.Helpers;
 using MimicaAPI.Models;
-using MimicaAPI.V1.Models;
 using MimicaAPI.Repositories.Contracts;
 using System;
 using System.Linq;

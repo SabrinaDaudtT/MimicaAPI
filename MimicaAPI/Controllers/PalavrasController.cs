@@ -10,9 +10,7 @@ using System.Collections.Generic;
 
 namespace MimicaAPI.Controllers
 {
-    [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiVersion("1.0")]
+    [Route("api/palavras")]
     public class PalavrasController : ControllerBase
     {
         private readonly IPalavrasRepository _repository;
