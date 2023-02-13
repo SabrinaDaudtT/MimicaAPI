@@ -1,16 +1,20 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MimicaAPI.Helpers;
-using MimicaAPI.Models;
-using MimicaAPI.Models.DTO;
-using MimicaAPI.Repositories.Contracts;
+using MimicaAPI.V1.Models;
+using MimicaAPI.V1.Models.DTO;
+using MimicaAPI.V1.Repositories.Contracts;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace MimicaAPI.Controllers
+namespace MimicaAPI.V1.Controllers
 {
-    [Route("api/palavras")]
+    [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    //[Route("api/[controller]")]
+    [ApiVersion("1.0", Deprecated = true)]
+    [ApiVersion("1.1")]
     public class PalavrasController : ControllerBase
     {
         private readonly IPalavrasRepository _repository;
@@ -22,6 +26,8 @@ namespace MimicaAPI.Controllers
             _mapper = mapper;
         }
 
+        [MapToApiVersion("1.0")]
+        [MapToApiVersion("1.1")]
         [HttpGet("",Name = "ObterTodos")]
         public ActionResult ObterTodos([FromQuery] PalavrasUrlQuery query)
         {
@@ -47,7 +53,7 @@ namespace MimicaAPI.Controllers
                     );
             }
 
-            list.Links.Add(new LinkDTO("self", Url.Link("ObterTodos", query), "GET"));
+            list.Links.Add(new LinkDTO("self", Url.Link( "ObterTodos", query), "GET"));
 
             if (item.Paginacao != null)
             {
@@ -67,6 +73,8 @@ namespace MimicaAPI.Controllers
             }
         }
 
+        [MapToApiVersion("1.0")]
+        [MapToApiVersion("1.1")]
         [HttpGet("{id}", Name = "ObterPalavra")]
         public ActionResult Obter(int id)
         {
@@ -90,6 +98,8 @@ namespace MimicaAPI.Controllers
         }
 
         //  api/palavras/(id, nome, ativo ...)
+        [MapToApiVersion("1.0")]
+        [MapToApiVersion("1.1")]
         [Route("")]
         [HttpPost]
         public ActionResult Cadastrar([FromBody] Palavra palavra)
@@ -114,6 +124,8 @@ namespace MimicaAPI.Controllers
         }
 
         //  api/palavras/{id}(id, nome, ativo ...)
+        [MapToApiVersion("1.0")]
+        [MapToApiVersion("1.1")]
         [HttpPut("{id}", Name = "AtualizarPalavra")]
         public ActionResult Atualizar(int id, [FromBody] Palavra palavra)
         {
@@ -143,6 +155,7 @@ namespace MimicaAPI.Controllers
         }
 
         //  api/palavras/{id}
+        [MapToApiVersion("1.1")]
         [HttpDelete("{id}", Name = "ExcluirPalavra")]
         public ActionResult Delete(int id)
         {

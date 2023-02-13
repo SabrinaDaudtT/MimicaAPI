@@ -7,8 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
 using MinicAPI.Helpers;
 using MimicaAPI.Database;
-using MimicaAPI.Repositories.Contracts;
-using MimicaAPI.Repositories;
+using MimicaAPI.V1.Repositories.Contracts;
+using MimicaAPI.V1.Repositories;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace MinicAPI
 {
@@ -47,6 +48,16 @@ namespace MinicAPI
             });
             services.AddMvc();
             services.AddScoped<IPalavrasRepository, PalavrasRepository>();
+
+            #region Versões de API
+            services.AddApiVersioning(cfg =>
+            {
+                cfg.ReportApiVersions = true;
+               // cfg.ApiVersionReader = new HeaderApiVersionReader("api-version");
+                cfg.AssumeDefaultVersionWhenUnspecified = true;
+                cfg.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+            });
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

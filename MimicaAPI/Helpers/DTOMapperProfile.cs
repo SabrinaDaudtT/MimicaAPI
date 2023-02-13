@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MimicaAPI.Helpers;
-using MimicaAPI.Models;
-using MimicaAPI.Models.DTO;
+using MimicaAPI.V1.Models;
+using MimicaAPI.V1.Models.DTO;
 
 namespace MinicAPI.Helpers
 {

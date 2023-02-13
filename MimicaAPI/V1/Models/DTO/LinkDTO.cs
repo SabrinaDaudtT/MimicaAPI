@@ -1,4 +1,4 @@
-﻿namespace MimicaAPI.Models.DTO
+﻿namespace MimicaAPI.V1.Models.DTO
 {
     public class LinkDTO
     {
